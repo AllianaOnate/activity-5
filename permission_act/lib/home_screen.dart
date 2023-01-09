@@ -1,7 +1,11 @@
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:permission_handler/permission_handler.dart';
 
+enum PhotoSection {
+  browseFiles,
+}
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
@@ -11,7 +15,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   String selectedImagePath = '';
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -98,7 +102,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         GestureDetector(
                           onTap: () async {
-                            selectedImagePath = await selectImageFromGallery();
+                            Map<Permission, PermissionStatus> statuses = await[Permission.storage].request();
+                            if(statuses[Permission.storage]!.isGranted){
+                              selectedImagePath = await selectImageFromGallery();
+                            } else {
+                              print('no permission is given!');
+                            }
                             print('Image_Path:-');
                             print(selectedImagePath);
                             if (selectedImagePath != '') {
@@ -174,16 +183,16 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   selectImageFromGallery() async {
-    XFile? image = await ImagePicker().pickImage(
+    XFile? file = await ImagePicker().pickImage(
       source: ImageSource.gallery, 
       imageQuality: 10
     );
-    
-      if (image != null) {
-        return image.path;
-      } else {
-        return '';
-      }
+
+    if (file != null) {
+      return file.path;
+    } else {
+      return '';
+    }
   }
 
   

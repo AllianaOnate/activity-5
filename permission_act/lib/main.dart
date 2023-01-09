@@ -7,6 +7,6 @@ void main(){
       primarySwatch: Colors.pink
     ),
     debugShowCheckedModeBanner: false,
-    home: HomeScreen(),
+    home: const HomeScreen(),
   ));
 }
